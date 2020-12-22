@@ -35,4 +35,5 @@ echo $USER_CERT_ARN
 #aws logs create-log-group --log-group-name clientvpn
 #aws logs create-log-stream --log-group-name clientvpn --log-stream-name $DOMAIN/$USER
 
-aws ec2 create-client-vpn-endpoint --client-cidr-block 10.5.0.0/22 --server-certificate-arn $DOMAIN_CERT_ARN --authentication-options Type=certificate-authentication,MutualAuthentication={ClientRootCertificateChainArn=$USER_CERT_ARN} --connection-log-options Enabled=true,CloudwatchLogGroup=clientvpn,CloudwatchLogStream=$DOMAIN/$USER
+aws ec2 create-client-vpn-endpoint --client-cidr-block 10.5.0.0/22 --server-certificate-arn $DOMAIN_CERT_ARN --authentication-options Type=certificate-authentication,MutualAuthentication={ClientRootCertificateChainArn=$USER_CERT_ARN} --connection-log-options Enabled=true,CloudwatchLogGroup=clientvpn,CloudwatchLogStream=$DOMAIN/$USER --tag-specifications ResourceType=client-vpn-endpoint,[{Key=Name,Value=$USER}]
+
