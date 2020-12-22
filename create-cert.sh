@@ -25,12 +25,14 @@ cd ~/$USER/
 
 
 
-domain_cert_arn=$(aws acm import-certificate --certificate fileb://$DOMAIN.crt --private-key fileb://$DOMAIN.key --certificate-chain fileb://ca.crt --tags Key=Name,Value=$DOMAIN --query CertificateArn --output text)
+DOMAIN_CERT_ARN=$(aws acm import-certificate --certificate fileb://$DOMAIN.crt --private-key fileb://$DOMAIN.key --certificate-chain fileb://ca.crt --tags Key=Name,Value=$DOMAIN --query CertificateArn --output text)
 sleep 2
-user_cert_arn=$(aws acm import-certificate --certificate fileb://$USER.$DOMAIN.crt --private-key fileb://$USER.$DOMAIN.key --certificate-chain fileb://ca.crt --tags Key=Name,Value=$USER --query CertificateArn --output text)
+USER_CERT_ARN=$(aws acm import-certificate --certificate fileb://$USER.$DOMAIN.crt --private-key fileb://$USER.$DOMAIN.key --certificate-chain fileb://ca.crt --tags Key=Name,Value=$USER --query CertificateArn --output text)
 
+echo $USER_CERT_ARN
 
+# Conditionally create the log group and stream.
 #aws logs create-log-group --log-group-name clientvpn
 #aws logs create-log-stream --log-group-name clientvpn --log-stream-name $DOMAIN/$USER
 
-aws ec2 create-client-vpn-endpoint --client-cidr-block 10.5.0.0/22 --server-certificate-arn domain_cert_arn --authentication-options Type=certificate-authentication,MutualAuthentication={ClientRootCertificateChainArn=$user_cert_arn} --connection-log-options Enabled=true,CloudwatchLogGroup=clientvpn,CloudwatchLogStream=$DOMAIN/$USER
+aws ec2 create-client-vpn-endpoint --client-cidr-block 10.5.0.0/22 --server-certificate-arn $DOMAIN_CERT_ARN --authentication-options Type=certificate-authentication,MutualAuthentication={ClientRootCertificateChainArn=$USER_CERT_ARN} --connection-log-options Enabled=true,CloudwatchLogGroup=clientvpn,CloudwatchLogStream=$DOMAIN/$USER
