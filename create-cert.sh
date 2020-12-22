@@ -4,8 +4,8 @@
 
 # TODO Get server keys from S3...
 
-export domain=aws.local
-export user=TEST-USER
+#export domain=aws.local
+#export user=TEST-USER
 export EASYRSA_BATCH=1
 
 
